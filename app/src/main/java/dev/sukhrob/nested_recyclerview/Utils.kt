@@ -5,7 +5,7 @@ import dev.sukhrob.nested_recyclerview.model.OuterData
 
 object Utils {
 
-    fun getChooseWordList(): ArrayList<OuterData> {
+    fun getFakeData(): ArrayList<OuterData> {
         val innerData = ArrayList<InnerData>()
         for (i in 1..10) {
             innerData.add(InnerData(i, false))

@@ -8,11 +8,17 @@ import dev.sukhrob.nested_recyclerview.dialog.MyDialog
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var dialog: MyDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViewBinding()
         setClickListeners()
+
+        dialog = MyDialog()
+        dialog.selected = {
+            // do something after get data from MyDialog
+        }
     }
 
     private fun setClickListeners() {
@@ -27,6 +33,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openDialog() {
-        MyDialog().show(supportFragmentManager, "my_dialog")
+        dialog.show(supportFragmentManager, "my_dialog")
     }
 }
