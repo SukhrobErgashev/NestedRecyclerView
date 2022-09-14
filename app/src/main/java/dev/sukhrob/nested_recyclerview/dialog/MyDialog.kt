@@ -12,8 +12,9 @@ import dev.sukhrob.nested_recyclerview.databinding.DialogMyBinding
 import dev.sukhrob.nested_recyclerview.model.OuterData
 
 class MyDialog: BaseDialog<DialogMyBinding>(DialogMyBinding::inflate) {
-    private lateinit var data: ArrayList<OuterData>
+    private lateinit var data: List<OuterData>
     private lateinit var adapter: OuterAdapter
+    private lateinit var truthData: List<OuterData>
 
     // The data will pass to MainActivity when user press 'Ok' btn.
     var selected: ((List<OuterData>) -> Unit)? = null
@@ -21,15 +22,17 @@ class MyDialog: BaseDialog<DialogMyBinding>(DialogMyBinding::inflate) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var map: Map<Int, List<Int>> = HashMap()
+        truthData = Utils.getFakeData()
         val listener = object : CheckListener {
 
             override fun chapterItemPressed(chapter: Int, b: Boolean) {
-                Log.d("TTT", "chapterItemPressed: chapter - $chapter -> $b")
+                truthData[chapter].sections.onEach {
+                    it.isChecked = b
+                }
             }
 
             override fun sectionItemPressed(chapter: Int, section: Int, b: Boolean) {
-                Log.d("TTT", "sectionItemPressed: chapter - $chapter, section - $section -> $b")
+                truthData[chapter].sections[section].isChecked = b
             }
 
         }
@@ -43,7 +46,7 @@ class MyDialog: BaseDialog<DialogMyBinding>(DialogMyBinding::inflate) {
 
     private fun setViewListeners() {
         binding.btnOk.setOnClickListener {
-            selected?.invoke(data)
+            selected?.invoke(truthData)
             dismiss()
         }
         binding.btnCancel.setOnClickListener {

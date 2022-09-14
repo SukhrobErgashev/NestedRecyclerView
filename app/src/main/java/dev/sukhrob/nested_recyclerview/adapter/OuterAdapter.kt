@@ -18,15 +18,16 @@ class OuterAdapter(
     inner class OuterViewHolder(private val binding: ItemOuterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val adapter: InnerAdapter by lazy {
-            InnerAdapter(
+        private lateinit var adapter: InnerAdapter
+
+        fun bind() {
+
+            adapter = InnerAdapter(
                 outerDataList[adapterPosition].sections,
                 outerDataList[adapterPosition].chapterNumber,
                 listener
             )
-        }
 
-        fun bind() {
             with(binding) {
                 textChapterNumber.text = outerDataList[adapterPosition].chapterNumber.toString()
                 checkboxChapter.isChecked = outerDataList[adapterPosition].isChecked

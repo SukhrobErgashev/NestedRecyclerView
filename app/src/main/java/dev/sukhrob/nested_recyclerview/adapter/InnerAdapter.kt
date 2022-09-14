@@ -1,5 +1,6 @@
 package dev.sukhrob.nested_recyclerview.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -23,16 +24,24 @@ class InnerAdapter(
             }
             binding.checkboxSection.isChecked = innerDataList[adapterPosition].isChecked
 
+            setListeners()
+        }
+
+        private fun setListeners() {
             binding.checkboxSection.setOnClickListener {
                 innerDataList[adapterPosition].isChecked = !innerDataList[adapterPosition].isChecked
                 notifyItemChanged(adapterPosition)
 
-                listener.sectionItemPressed(
-                    chapter,
-                    innerDataList[adapterPosition].sectionNumber,
-                    binding.checkboxSection.isChecked
-                )
+                notifyDialog()
             }
+        }
+
+        private fun notifyDialog() {
+            listener.sectionItemPressed(
+                chapter,
+                innerDataList[adapterPosition].sectionNumber,
+                binding.checkboxSection.isChecked
+            )
         }
     }
 
