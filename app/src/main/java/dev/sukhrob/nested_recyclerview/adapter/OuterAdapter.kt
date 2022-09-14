@@ -5,37 +5,65 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dev.sukhrob.nested_recyclerview.CheckListener
 import dev.sukhrob.nested_recyclerview.databinding.ItemOuterBinding
 import dev.sukhrob.nested_recyclerview.model.OuterData
 
 
-class OuterAdapter(val outerDataList: ArrayList<OuterData>) :
-    RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
+class OuterAdapter(
+    private val outerDataList: List<OuterData>,
+    private val listener: CheckListener
+) : RecyclerView.Adapter<OuterAdapter.OuterViewHolder>() {
 
     inner class OuterViewHolder(private val binding: ItemOuterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private val adapter: InnerAdapter by lazy {
-            InnerAdapter(outerDataList[adapterPosition].sections)
+            InnerAdapter(
+                outerDataList[adapterPosition].sections,
+                outerDataList[adapterPosition].chapterNumber,
+                listener
+            )
         }
 
         fun bind() {
             with(binding) {
                 textChapterNumber.text = outerDataList[adapterPosition].chapterNumber.toString()
+                checkboxChapter.isChecked = outerDataList[adapterPosition].isChecked
+                expandableLayout.visibility =
+                    if (outerDataList[adapterPosition].isExpanded) {
+                        View.VISIBLE
+                    } else {
+                        View.GONE
+                    }
             }
 
-            binding.expandableLayout.visibility =
-                if (outerDataList[adapterPosition].isExpanded) {
-                    View.VISIBLE
-                } else {
-                    View.GONE
-                }
-
             setupRV()
+            setClickListeners()
+        }
 
+        private fun setClickListeners() {
+            // expand recyclerview item's inner recyclerview
             binding.relativeLayout.setOnClickListener {
-                outerDataList[adapterPosition].isExpanded = !outerDataList[adapterPosition].isExpanded
+                outerDataList[adapterPosition].isExpanded =
+                    !outerDataList[adapterPosition].isExpanded
                 notifyItemChanged(adapterPosition)
+            }
+
+            // Chapter's checkbox is pressed
+            binding.checkboxChapter.setOnClickListener {
+                // change isChecked field of outer data object at index
+                outerDataList[adapterPosition].isChecked = !outerDataList[adapterPosition].isChecked
+                notifyItemChanged(adapterPosition)
+
+                // pass data to MyDialog
+                listener.chapterItemPressed(
+                    outerDataList[adapterPosition].chapterNumber,
+                    binding.checkboxChapter.isChecked
+                )
+
+                // set true or false all items of its all chapters
+                adapter.changeInnerDataList(outerDataList[adapterPosition].isChecked)
             }
         }
 
